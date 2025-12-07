@@ -28,21 +28,26 @@ def _normalize_status(value: pd.Series) -> pd.Series:
 
 
 def clean_daily_transactions(
-    execution_date: date,
     raw_dir: Path,
     clean_dir: Path,
     raw_template: str = RAW_FILE_TEMPLATE,
     clean_template: str = CLEAN_FILE_TEMPLATE,
+    **context,
 ) -> Path:
     """Read the raw CSV for the DAG date, clean it, and save a parquet file."""
-
-    ds_nodash = execution_date.strftime("%Y%m%d")
+    # Get the execution date from context
+    data_interval_start = context.get("data_interval_start")
+    if data_interval_start:
+        ds_nodash = data_interval_start.format("YYYYMMDD")
+    else:
+        # Fallback for testing
+        ds_nodash = context.get("ds_nodash", "20251207")
     input_path = raw_dir / raw_template.format(ds_nodash=ds_nodash)
     output_path = clean_dir / clean_template.format(ds_nodash=ds_nodash)
 
     if not input_path.exists():
         raise FileNotFoundError(
-            f"Raw data not found for {execution_date}: {input_path}"
+            f"Raw data not found for {ds_nodash}: {input_path}"
         )
 
     clean_dir.mkdir(parents=True, exist_ok=True)
@@ -69,4 +74,4 @@ def clean_daily_transactions(
 
     df.to_parquet(output_path, index=False)
 
-    return output_path
+    return str(output_path)

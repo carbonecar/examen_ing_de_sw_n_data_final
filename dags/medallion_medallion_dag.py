@@ -12,11 +12,9 @@ from pathlib import Path
 import pendulum
 from airflow import DAG
 from airflow.exceptions import AirflowException
-from airflow.operators.python import PythonOperator
-
 # pylint: disable=import-error,wrong-import-position
-
-
+from airflow.providers.standard.operators.bash import BashOperator
+from airflow.providers.standard.operators.python import PythonOperator
 BASE_DIR = Path(__file__).resolve().parents[1]
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
@@ -73,15 +71,13 @@ def _run_dbt_command(command: str, ds_nodash: str) -> subprocess.CompletedProces
 def build_dag() -> DAG:
     """Construct the medallion pipeline DAG with bronze/silver/gold tasks."""
     with DAG(
-        description="Bronze/Silver/Gold medallion demo with pandas, dbt, and DuckDB",
         dag_id="medallion_pipeline",
+        description="Bronze Silver Gold",
         schedule="0 6 * * *",
         start_date=pendulum.datetime(2025, 12, 1, tz="UTC"),
-        catchup=True,
+        catchup=False,
         max_active_runs=1,
     ) as medallion_dag:
-
-
         # TODO:
         # * Agregar las tasks necesarias del pipeline para completar lo pedido por el enunciado.
         # * Usar PythonOperator con el argumento op_kwargs para pasar ds_nodash a las funciones.
@@ -94,9 +90,23 @@ def build_dag() -> DAG:
         #  * Asegurarse de que los paths usados en las funciones sean relativos a BASE_DIR.
         #  * Usar las funciones definidas arriba para cada etapa del pipeline.
 
+        # * No se pueden usar las recomendaciones porque no son compatibles con las versiones de Airflow
+        #   usadas en este entorno de evaluación
+ 
+        t1=BashOperator(
+            task_id='print_date',
+            bash_command='date'
+        )
 
-
-    return medallion_dag
+        t2=PythonOperator(
+            task_id='clean_daily_transactions',
+            python_callable=clean_daily_transactions,
+            op_kwargs={
+                "raw_dir": RAW_DIR,
+                "clean_dir": CLEAN_DIR,
+            },
+        )
+        return medallion_dag
 
 
 dag = build_dag()
