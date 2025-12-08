@@ -30,6 +30,40 @@ DBT_DIR = BASE_DIR / "dbt"
 PROFILES_DIR = BASE_DIR / "profiles"
 WAREHOUSE_PATH = BASE_DIR / "warehouse/medallion.duckdb"
 
+def run_dbt_silver(ti=None, **context):
+    """Run dbt silver layer models."""
+    # Debug: print available context keys
+    print(f"Available context keys: {list(context.keys())}")
+
+    # Get execution date from context - try multiple possible keys
+    logical_date = (
+        context.get('logical_date') or
+        context.get('execution_date') or
+        context.get('data_interval_start') or
+        context.get('run_id')  # Last resort, parse from run_id
+    )
+
+    print(f"Logical date found: {logical_date}, type: {type(logical_date)}")
+
+    # If we still don't have a date, use current date
+    if logical_date is None:
+        logical_date = pendulum.now('UTC')
+
+    # Handle both pendulum and datetime objects
+    if hasattr(logical_date, 'strftime'):
+        ds_nodash = logical_date.strftime("%Y%m%d")
+    else:
+        # Fallback: use today's date
+        ds_nodash = pendulum.now('UTC').strftime("%Y%m%d")
+
+    print(f"Using ds_nodash: {ds_nodash}")
+
+    result = _run_dbt_command("run --models staging", ds_nodash)
+
+    if result.returncode != 0:
+        raise AirflowException(f"dbt silver failed: {result.stderr}")
+
+    return result.stdout
 
 def _build_env(ds_nodash: str) -> dict[str, str]:
     """Build environment variables needed by dbt commands."""
@@ -48,13 +82,10 @@ def _build_env(ds_nodash: str) -> dict[str, str]:
 def _run_dbt_command(command: str, ds_nodash: str) -> subprocess.CompletedProcess:
     """Execute a dbt command and return the completed process."""
     env = _build_env(ds_nodash)
+    # Split command into individual arguments
+    cmd_parts = command.split()
     return subprocess.run(
-        [
-            "dbt",
-            command,
-            "--project-dir",
-            str(DBT_DIR),
-        ],
+        ["dbt"] + cmd_parts + ["--project-dir", str(DBT_DIR)],
         cwd=DBT_DIR,
         env=env,
         capture_output=True,
@@ -75,7 +106,7 @@ def build_dag() -> DAG:
         description="Bronze Silver Gold",
         schedule="0 6 * * *",
         start_date=pendulum.datetime(2025, 12, 1, tz="UTC"),
-        catchup=False,
+        catchup=True,
         max_active_runs=1,
     ) as medallion_dag:
         # TODO:
@@ -92,13 +123,9 @@ def build_dag() -> DAG:
 
         # * No se pueden usar las recomendaciones porque no son compatibles con las versiones de Airflow
         #   usadas en este entorno de evaluación
- 
-        t1=BashOperator(
-            task_id='print_date',
-            bash_command='date'
-        )
 
-        t2=PythonOperator(
+        ## Esta es la capa bronze
+        bronze_clean=PythonOperator(
             task_id='clean_daily_transactions',
             python_callable=clean_daily_transactions,
             op_kwargs={
@@ -106,6 +133,16 @@ def build_dag() -> DAG:
                 "clean_dir": CLEAN_DIR,
             },
         )
+
+        ## Esta es la capa silver donde se guarda en DuckDB via dbt
+        silver_dbt_run = PythonOperator(
+            task_id="run_dbt_silver",
+            python_callable=run_dbt_silver,
+        )
+
+        # Define task dependencies
+        bronze_clean >> silver_dbt_run
+ 
         return medallion_dag
 
 

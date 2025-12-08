@@ -6,3 +6,9 @@ Al usar subprocesos para llamar a dbt se importan librerias nativas de duckdb, d
 - ds_nodash ya no está disponible en el contexto de Jinja por defecto
 Se recomienda usar logical_date que es un objeto datetime que representa la fecha lógica de ejecución
 Usamos .strftime('%Y%m%d') para obtener el formato sin guiones (ej: 20251201)
+-  No se pudieron usar las recomendaciones porque no son compatibles con las versiones de Airflow usadas en este entorno de evaluación
+
+
+
+### Mejoras
+- Usar postgres u otra base de datos mas robusta
