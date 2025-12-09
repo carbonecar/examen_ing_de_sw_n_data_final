@@ -30,6 +30,58 @@ DBT_DIR = BASE_DIR / "dbt"
 PROFILES_DIR = BASE_DIR / "profiles"
 WAREHOUSE_PATH = BASE_DIR / "warehouse/medallion.duckdb"
 
+def run_dbt_tests(ti=None, **context):
+    """Run dbt tests and save results to quality directory."""
+    # Get execution date from context
+    logical_date = (
+        context.get('data_interval_start') or
+        context.get('logical_date') or
+        context.get('execution_date') or
+        pendulum.now('UTC')
+    )
+
+    if logical_date is None:
+        logical_date = pendulum.now('UTC')
+
+    if hasattr(logical_date, 'strftime'):
+        ds_nodash = logical_date.strftime("%Y%m%d")
+    else:
+        ds_nodash = pendulum.now('UTC').strftime("%Y%m%d")
+
+    print(f"Running dbt tests for ds_nodash: {ds_nodash}")
+
+    # Run dbt test
+    result = _run_dbt_command("test", ds_nodash)
+
+    # Parse the results - dbt test returns non-zero if tests fail
+    test_status = "passed" if result.returncode == 0 else "failed"
+
+    # Create results JSON
+    results = {
+        "date": ds_nodash,
+        "status": test_status,
+        "return_code": result.returncode,
+        "stdout": result.stdout,
+        "stderr": result.stderr,
+        "timestamp": pendulum.now('UTC').isoformat()
+    }
+
+    # Save to quality directory
+    quality_file = QUALITY_DIR / f"dq_results_{ds_nodash}.json"
+    QUALITY_DIR.mkdir(parents=True, exist_ok=True)
+
+    with open(quality_file, 'w') as f:
+        json.dump(results, f, indent=2)
+
+    print(f"Test results saved to: {quality_file}")
+    print(f"Overall status: {test_status}")
+
+    # Don't raise exception on test failures, just log them
+    if test_status == "failed":
+        print(f"WARNING: Some tests failed. Check {quality_file} for details.")
+
+    return results
+
 def run_dbt_silver(ti=None, **context):
     """Run dbt silver layer models."""
     # Debug: print available context keys
@@ -140,9 +192,15 @@ def build_dag() -> DAG:
             python_callable=run_dbt_silver,
         )
 
+        ## Esta es la capa gold donde se ejecutan los tests de calidad
+        gold_dbt_tests = PythonOperator(
+            task_id="gold_dbt_tests",
+            python_callable=run_dbt_tests,
+        )
+
         # Define task dependencies
-        bronze_clean >> silver_dbt_run
- 
+        bronze_clean >> silver_dbt_run >> gold_dbt_tests
+
         return medallion_dag
 
 
