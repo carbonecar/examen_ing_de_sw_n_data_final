@@ -22,7 +22,6 @@ with DAG(
     #    bronze -> silver -> gold.
     pass
 
-
     # Ejemplo de definición de una tarea usando PythonOperator
     # from airflow.operators.python import PythonOperator
     # bronze_task = PythonOperator(
@@ -33,7 +32,3 @@ with DAG(
 
     # Definir las dependencias entre tareas
     # bronze_task >> silver_task >> gold_task
-    
-
-
-    

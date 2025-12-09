@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 import pendulum
+
 RAW_FILE_TEMPLATE = "transactions_{ds_nodash}.csv"
 CLEAN_FILE_TEMPLATE = "transactions_{ds_nodash}_clean.parquet"
 
@@ -41,31 +42,28 @@ def clean_daily_transactions(
         ds_nodash = data_interval_start.format("YYYYMMDD")
     else:
         logical_date = (
-            context.get('logical_date') or
-            context.get('execution_date') or
-            context.get('data_interval_start') or
-            context.get('run_id')  # Last resort, parse from run_id
+            context.get("logical_date")
+            or context.get("execution_date")
+            or context.get("data_interval_start")
+            or context.get("run_id")  # Last resort, parse from run_id
         )
         if logical_date is None:
-            logical_date = pendulum.now('UTC')
+            logical_date = pendulum.now("UTC")
 
         # Handle both pendulum and datetime objects
-        if hasattr(logical_date, 'strftime'):
+        if hasattr(logical_date, "strftime"):
             ds_nodash = logical_date.strftime("%Y%m%d")
         else:
-        # Fallback: use today's date
+            # Fallback: use today's date
             ds_nodash = context.get("ds_nodash")
             if not ds_nodash:
-                ds_nodash = pendulum.now('UTC').strftime("%Y%m%d")
-
+                ds_nodash = pendulum.now("UTC").strftime("%Y%m%d")
 
     input_path = raw_dir / raw_template.format(ds_nodash=ds_nodash)
     output_path = clean_dir / clean_template.format(ds_nodash=ds_nodash)
 
     if not input_path.exists():
-        raise FileNotFoundError(
-            f"Raw data not found for {ds_nodash}: {input_path}"
-        )
+        raise FileNotFoundError(f"Raw data not found for {ds_nodash}: {input_path}")
 
     clean_dir.mkdir(parents=True, exist_ok=True)
 

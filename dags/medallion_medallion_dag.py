@@ -12,9 +12,11 @@ from pathlib import Path
 import pendulum
 from airflow import DAG
 from airflow.exceptions import AirflowException
+
 # pylint: disable=import-error,wrong-import-position
 from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.standard.operators.python import PythonOperator
+
 BASE_DIR = Path(__file__).resolve().parents[1]
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
@@ -30,23 +32,24 @@ DBT_DIR = BASE_DIR / "dbt"
 PROFILES_DIR = BASE_DIR / "profiles"
 WAREHOUSE_PATH = BASE_DIR / "warehouse/medallion.duckdb"
 
+
 def run_dbt_tests(ti=None, **context):
     """Run dbt tests and save results to quality directory."""
     # Get execution date from context
     logical_date = (
-        context.get('data_interval_start') or
-        context.get('logical_date') or
-        context.get('execution_date') or
-        pendulum.now('UTC')
+        context.get("data_interval_start")
+        or context.get("logical_date")
+        or context.get("execution_date")
+        or pendulum.now("UTC")
     )
 
     if logical_date is None:
-        logical_date = pendulum.now('UTC')
+        logical_date = pendulum.now("UTC")
 
-    if hasattr(logical_date, 'strftime'):
+    if hasattr(logical_date, "strftime"):
         ds_nodash = logical_date.strftime("%Y%m%d")
     else:
-        ds_nodash = pendulum.now('UTC').strftime("%Y%m%d")
+        ds_nodash = pendulum.now("UTC").strftime("%Y%m%d")
 
     print(f"Running dbt tests for ds_nodash: {ds_nodash}")
 
@@ -63,14 +66,14 @@ def run_dbt_tests(ti=None, **context):
         "return_code": result.returncode,
         "stdout": result.stdout,
         "stderr": result.stderr,
-        "timestamp": pendulum.now('UTC').isoformat()
+        "timestamp": pendulum.now("UTC").isoformat(),
     }
 
     # Save to quality directory
     quality_file = QUALITY_DIR / f"dq_results_{ds_nodash}.json"
     QUALITY_DIR.mkdir(parents=True, exist_ok=True)
 
-    with open(quality_file, 'w') as f:
+    with open(quality_file, "w") as f:
         json.dump(results, f, indent=2)
 
     print(f"Test results saved to: {quality_file}")
@@ -82,6 +85,7 @@ def run_dbt_tests(ti=None, **context):
 
     return results
 
+
 def run_dbt_silver(ti=None, **context):
     """Run dbt silver layer models."""
     # Debug: print available context keys
@@ -89,24 +93,24 @@ def run_dbt_silver(ti=None, **context):
 
     # Get execution date from context - try multiple possible keys
     logical_date = (
-        context.get('logical_date') or
-        context.get('execution_date') or
-        context.get('data_interval_start') or
-        context.get('run_id')  # Last resort, parse from run_id
+        context.get("logical_date")
+        or context.get("execution_date")
+        or context.get("data_interval_start")
+        or context.get("run_id")  # Last resort, parse from run_id
     )
 
     print(f"Logical date found: {logical_date}, type: {type(logical_date)}")
 
     # If we still don't have a date, use current date
     if logical_date is None:
-        logical_date = pendulum.now('UTC')
+        logical_date = pendulum.now("UTC")
 
     # Handle both pendulum and datetime objects
-    if hasattr(logical_date, 'strftime'):
+    if hasattr(logical_date, "strftime"):
         ds_nodash = logical_date.strftime("%Y%m%d")
     else:
         # Fallback: use today's date
-        ds_nodash = pendulum.now('UTC').strftime("%Y%m%d")
+        ds_nodash = pendulum.now("UTC").strftime("%Y%m%d")
 
     print(f"Using ds_nodash: {ds_nodash}")
 
@@ -116,6 +120,7 @@ def run_dbt_silver(ti=None, **context):
         raise AirflowException(f"dbt silver failed: {result.stderr}")
 
     return result.stdout
+
 
 def _build_env(ds_nodash: str) -> dict[str, str]:
     """Build environment variables needed by dbt commands."""
@@ -177,8 +182,8 @@ def build_dag() -> DAG:
         #   usadas en este entorno de evaluación
 
         ## Esta es la capa bronze
-        bronze_clean=PythonOperator(
-            task_id='clean_daily_transactions',
+        bronze_clean = PythonOperator(
+            task_id="clean_daily_transactions",
             python_callable=clean_daily_transactions,
             op_kwargs={
                 "raw_dir": RAW_DIR,
@@ -205,4 +210,3 @@ def build_dag() -> DAG:
 
 
 dag = build_dag()
-
