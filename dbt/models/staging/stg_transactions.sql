@@ -11,10 +11,10 @@ with source as (
 -- TODO: Completar el modelo para que cree la tabla staging con los tipos adecuados segun el schema.yml.
 -- Creamos la tabla staging stg_transactions segun la definicion en schema.yml
 select
-    transaction_id::string,
-    customer_id::string,
-    amount::decimal,
-    status::string,
-    transaction_ts::timestamp,
-    transaction_date::date,
+    transaction_id,
+    customer_id,
+    amount,
+    status,
+    transaction_ts,
+    transaction_date,
 from source

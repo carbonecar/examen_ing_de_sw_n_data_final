@@ -58,7 +58,7 @@ def run_dbt_silver(ti=None, **context):
 
     print(f"Using ds_nodash: {ds_nodash}")
 
-    result = _run_dbt_command("run --models staging", ds_nodash)
+    result = _run_dbt_command("run", ds_nodash)
 
     if result.returncode != 0:
         raise AirflowException(f"dbt silver failed: {result.stderr}")
@@ -147,3 +147,4 @@ def build_dag() -> DAG:
 
 
 dag = build_dag()
+

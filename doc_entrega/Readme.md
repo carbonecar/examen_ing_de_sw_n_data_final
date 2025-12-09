@@ -12,3 +12,5 @@ Usamos .strftime('%Y%m%d') para obtener el formato sin guiones (ej: 20251201)
 
 ### Mejoras
 - Usar postgres u otra base de datos mas robusta
+- Mejorar el manejo de fechas para que tome el uso horario correspondiente
+- Cuando los raw estan con el mismo id el proceso rompe. Se podria validar tal caso
