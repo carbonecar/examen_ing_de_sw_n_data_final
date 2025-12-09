@@ -9,9 +9,9 @@ with base as (
 fct_customer_transactions as (
      select
         customer_id,
-        count(transaction_id) as total_transactions,
-        sum( case when status='completed' then amount else 0 end) as total_amount,
-        avg(amount) as average_amount
+        count(transaction_id) as transaction_count,
+        sum( case when status='completed' then amount else 0 end) as total_amount_completed,
+        sum(amount) as total_amount_all
     from stg_transactions
     group by customer_id
 )
