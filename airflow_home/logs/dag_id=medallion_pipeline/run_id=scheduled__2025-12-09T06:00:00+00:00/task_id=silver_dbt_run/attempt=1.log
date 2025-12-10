@@ -1,0 +1,60 @@
+{"timestamp":"2025-12-10T02:34:10.533983Z","level":"info","event":"DAG bundles loaded: dags-folder","logger":"airflow.dag_processing.bundles.manager.DagBundlesManager","filename":"manager.py","lineno":179}
+{"timestamp":"2025-12-10T02:34:10.536724Z","level":"info","event":"Filling up the DagBag from /home/nilay/examen_ing_de_sw_n_data_final/dags/medallion_medallion_dag.py","logger":"airflow.models.dagbag.DagBag","filename":"dagbag.py","lineno":593}
+{"timestamp":"2025-12-10T02:34:11.741145Z","level":"warning","event":"The `airflow.operators.python.PythonOperator` attribute is deprecated. Please use `'airflow.providers.standard.operators.python.PythonOperator'`.","category":"DeprecatedImportWarning","filename":"/home/nilay/examen_ing_de_sw_n_data_final/dags/medallion_medallion_dag.py","lineno":15,"logger":"py.warnings"}
+{"timestamp":"2025-12-10T02:34:11.774826Z","level":"info","event":"[silver_dbt_run] Ejecutando dbt run para ds_nodash=20251209","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.328685Z","level":"info","event":"[silver_dbt_run] STDOUT: \u001b[0m02:34:14  Running with dbt=1.10.15","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.331187Z","level":"info","event":"\u001b[0m02:34:15  Registered adapter: duckdb=1.10.0","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.331423Z","level":"info","event":"\u001b[0m02:34:15  Unable to do partial parsing because saved manifest not found. Starting full parse.","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.331606Z","level":"info","event":"\u001b[0m02:34:18  [\u001b[33mWARNING\u001b[0m][MissingArgumentsPropertyInGenericTestDeprecation]: Deprecated","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.331720Z","level":"info","event":"functionality","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.331805Z","level":"info","event":"Found top-level arguments to test `accepted_values`. Arguments to generic tests","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.331876Z","level":"info","event":"should be nested under the `arguments` property.`","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332082Z","level":"info","event":"\u001b[0m02:34:18  Encountered an error:","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332167Z","level":"info","event":"[Errno 13] Permission denied: '/home/nilay/examen_ing_de_sw_n_data_final/dbt/target/partial_parse.msgpack'","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332371Z","level":"info","event":"\u001b[0m02:34:18  Traceback (most recent call last):","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332513Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 178, in wrapper","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332730Z","level":"info","event":"    result, success = func(*args, **kwargs)","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332833Z","level":"info","event":"                      ^^^^^^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332905Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 128, in wrapper","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.332972Z","level":"info","event":"    return func(*args, **kwargs)","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333035Z","level":"info","event":"           ^^^^^^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333095Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 272, in wrapper","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333152Z","level":"info","event":"    return func(*args, **kwargs)","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333207Z","level":"info","event":"           ^^^^^^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333264Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 303, in wrapper","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333711Z","level":"info","event":"    return func(*args, **kwargs)","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333847Z","level":"info","event":"           ^^^^^^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333925Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 373, in wrapper","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333991Z","level":"info","event":"    return func(*args, **kwargs)","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334050Z","level":"info","event":"           ^^^^^^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334119Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 350, in wrapper","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334222Z","level":"info","event":"    return func(*args, **kwargs)","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334342Z","level":"info","event":"           ^^^^^^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334463Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 389, in wrapper","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334548Z","level":"info","event":"    setup_manifest(ctx, write=write, write_perf_info=write_perf_info)","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334611Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/cli/requires.py\", line 416, in setup_manifest","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334669Z","level":"info","event":"    ctx.obj[\"manifest\"] = parse_manifest(","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334723Z","level":"info","event":"                          ^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334777Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/parser/manifest.py\", line 2123, in parse_manifest","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.334962Z","level":"info","event":"    manifest = ManifestLoader.get_full_manifest(","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335056Z","level":"info","event":"               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335120Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/parser/manifest.py\", line 320, in get_full_manifest","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335324Z","level":"info","event":"    manifest = loader.load()","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335538Z","level":"info","event":"               ^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335667Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/parser/manifest.py\", line 518, in load","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335778Z","level":"info","event":"    self.write_manifest_for_partial_parse()","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335889Z","level":"info","event":"  File \"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/dbt/parser/manifest.py\", line 828, in write_manifest_for_partial_parse","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.335984Z","level":"info","event":"    with open(path, \"wb\") as fp:","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.336183Z","level":"info","event":"         ^^^^^^^^^^^^^^^^","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.336320Z","level":"info","event":"PermissionError: [Errno 13] Permission denied: '/home/nilay/examen_ing_de_sw_n_data_final/dbt/target/partial_parse.msgpack'","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.336522Z","level":"info","event":"","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.336657Z","level":"info","event":"\u001b[0m02:34:18  [\u001b[33mWARNING\u001b[0m][DeprecationsSummary]: Deprecated functionality","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.336764Z","level":"info","event":"Summary of encountered deprecations:","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.336865Z","level":"info","event":"- MissingArgumentsPropertyInGenericTestDeprecation: 1 occurrence","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.336953Z","level":"info","event":"To see all deprecation instances instead of just the first occurrence of each,","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.337048Z","level":"info","event":"run command again with the `--show-all-deprecations` flag. You may also need to","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.337152Z","level":"info","event":"run with `--no-partial-parse` as some deprecations are only encountered during","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.337244Z","level":"info","event":"parsing.","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.337658Z","level":"info","event":"","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.337775Z","level":"info","event":"[silver_dbt_run] STDERR:","logger":"task.stdout"}
+{"timestamp":"2025-12-10T02:34:20.333513Z","level":"error","event":"Task failed with exception","logger":"task","filename":"task_runner.py","lineno":980,"error_detail":[{"exc_type":"AirflowException","exc_value":"dbt run falló. Revisar logs de STDOUT/STDERR.","exc_notes":[],"syntax_error":null,"is_cause":false,"frames":[{"filename":"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/airflow/sdk/execution_time/task_runner.py","lineno":928,"name":"run"},{"filename":"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/airflow/sdk/execution_time/task_runner.py","lineno":1315,"name":"_execute_task"},{"filename":"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/airflow/sdk/bases/operator.py","lineno":416,"name":"wrapper"},{"filename":"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/airflow/providers/standard/operators/python.py","lineno":215,"name":"execute"},{"filename":"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/airflow/providers/standard/operators/python.py","lineno":238,"name":"execute_callable"},{"filename":"/home/nilay/examen_ing_de_sw_n_data_final/.venv/lib/python3.12/site-packages/airflow/sdk/execution_time/callback_runner.py","lineno":82,"name":"run"},{"filename":"/home/nilay/examen_ing_de_sw_n_data_final/dags/medallion_medallion_dag.py","lineno":103,"name":"_silver_dbt_run"}],"is_group":false,"exceptions":[]}]}
