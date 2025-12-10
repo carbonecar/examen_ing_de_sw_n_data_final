@@ -11,11 +11,15 @@ Usamos .strftime('%Y%m%d') para obtener el formato sin guiones (ej: 20251201)
 
 
 ### Mejoras
+- Se agregan mas archivos raw para que pueda correr el proceso con mas de un dia scheduleado y no sea necesario correrlo por consola en un día determinado
+- Se implementa que la lectura de los archivos apendee datos. No se le encuentra sentido a que solo deje la última fecha en el wharehouse asi que se carga por customer_id+_fecha
+- Se soluciona el problema de la falla cuando no hay archivos generando uno vacio
 - Usar postgres u otra base de datos mas robusta
 - Mejorar el manejo de fechas para que tome el uso horario correspondiente
 - Cuando los raw estan con el mismo id el proceso rompe. Se podria validar tal caso
 
 
 ### Corridas
+- Se verifica idempotencia
 
 ```airflow dags trigger medallion_pipeline --run-id manual_$(date +%s) ```

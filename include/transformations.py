@@ -63,7 +63,11 @@ def clean_daily_transactions(
     output_path = clean_dir / clean_template.format(ds_nodash=ds_nodash)
 
     if not input_path.exists():
-        raise FileNotFoundError(f"Raw data not found for {ds_nodash}: {input_path}")
+        # crear un archivo vacio con estas colounas transaction_id,customer_id,amount,status,transaction_ts para evitar errores
+        columns = ["transaction_id", "customer_id", "amount", "status", "transaction_ts"]
+        empty_df = pd.DataFrame(columns=columns)
+        empty_df.to_csv(input_path, index=False)
+        #raise FileNotFoundError(f"Raw data not found for {ds_nodash}: {input_path}")
 
     clean_dir.mkdir(parents=True, exist_ok=True)
 

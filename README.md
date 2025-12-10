@@ -207,4 +207,5 @@ Necesarios para completar el workflow:
 - [ ] Implementar pruebas de dbt para asegurar que las tablas gold estén correctas.
 - [ ] Documentar mejoras posibles para el proceso considerado aspectos de escalabilidad y modelado de datos.
 Nice to hace:
-- [ ] Manejar el caso que no haya archivos para el dia indicado.
+- [x] Manejar el caso que no haya archivos para el dia indicado.
+- - Se soluciona generando un archivo vacio con las columas indicadas
