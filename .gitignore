@@ -1,3 +1,8 @@
 .venv/
 airflow_home/
 __pycache__/
+.DS_Store
+dbt/logs/
+dbt/target/
+warehouse/medallion.duckdb
+profiles/.user.yml
