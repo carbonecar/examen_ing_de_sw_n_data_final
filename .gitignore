@@ -6,3 +6,4 @@ dbt/logs/
 dbt/target/
 warehouse/medallion.duckdb
 profiles/.user.yml
+*.log

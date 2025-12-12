@@ -7,16 +7,17 @@ Al usar subprocesos para llamar a dbt se importan librerias nativas de duckdb, d
 Se recomienda usar logical_date que es un objeto datetime que representa la fecha lógica de ejecución
 Usamos .strftime('%Y%m%d') para obtener el formato sin guiones (ej: 20251201)
 -  No se pudieron usar las recomendaciones porque no son compatibles con las versiones de Airflow usadas en este entorno de evaluación
+- Airflow guarda cookies, por lo tanto al iniciar el entorno dependendiendo de que tipo de configuracion se tenga el navegador puede mostrar login incorrecto, probar loguearse de forma incógnita para validar si son las cookies o valores en la session, de ser asi, eliminarlos o trabajar de modo incógnito.
 
-
-
-### Mejoras
+### Mejoras Ralizadas
 - Se agregan mas archivos raw para que pueda correr el proceso con mas de un dia scheduleado y no sea necesario correrlo por consola en un día determinado
 - Se implementa que la lectura de los archivos apendee datos. No se le encuentra sentido a que solo deje la última fecha en el wharehouse asi que se carga por customer_id+_fecha
 - Se soluciona el problema de la falla cuando no hay archivos generando uno vacio
+### Mejoras.y bugs a resolver
 - Usar postgres u otra base de datos mas robusta
 - Mejorar el manejo de fechas para que tome el uso horario correspondiente
 - Cuando los raw estan con el mismo id el proceso rompe. Se podria validar tal caso
+- A veces los procesos se quedan "colgados" si se les da reniciar avanzan, es un bug conocido pero habria que solucionarlo
 
 
 ### Corridas

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -14,11 +14,11 @@ CLEAN_FILE_TEMPLATE = "transactions_{ds_nodash}_clean.parquet"
 
 def _coerce_amount(value: pd.Series) -> pd.Series:
     """Normalize numeric fields and drop non-coercible entries."""
-    coerced = pd.to_numeric(value, errors="coerce")
-    return coerced
+    return pd.to_numeric(value, errors="coerce")
 
 
 def _normalize_status(value: pd.Series) -> pd.Series:
+    """Normalize status values to a standard set."""
     normalized = value.fillna("").str.strip().str.lower()
     mapping = {
         "completed": "completed",
@@ -71,9 +71,10 @@ def clean_daily_transactions(
 
     clean_dir.mkdir(parents=True, exist_ok=True)
 
+    # Leer el CSV seleccionado
     df = pd.read_csv(input_path)
 
-    # Basic cleanup
+    # Limpiezas básicas
     df.columns = [col.strip().lower() for col in df.columns]
     df = df.drop_duplicates()
 
@@ -85,12 +86,13 @@ def clean_daily_transactions(
 
     df = df.dropna(subset=["transaction_id", "customer_id", "amount", "status"])
 
-    # Add simple derived fields for downstream dbt modeling
+    # Campos derivados
     if "transaction_ts" in df.columns:
         df["transaction_ts"] = pd.to_datetime(df["transaction_ts"], errors="coerce")
         df = df.dropna(subset=["transaction_ts"])
         df["transaction_date"] = df["transaction_ts"].dt.date
 
+    # Guardar parquet
     df.to_parquet(output_path, index=False)
 
     return str(output_path)

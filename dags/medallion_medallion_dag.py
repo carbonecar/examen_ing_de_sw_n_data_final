@@ -14,17 +14,20 @@ from airflow import DAG
 from airflow.exceptions import AirflowException
 
 # pylint: disable=import-error,wrong-import-position
-from airflow.providers.standard.operators.bash import BashOperator
 from airflow.providers.standard.operators.python import PythonOperator
 
+from include.transformations import (
+    clean_daily_transactions
+)
+
+
+# Carpeta base del proyecto (un nivel por encima de /dags)
 BASE_DIR = Path(__file__).resolve().parents[1]
 if str(BASE_DIR) not in sys.path:
     sys.path.append(str(BASE_DIR))
 
-from include.transformations import (
-    clean_daily_transactions,
-)  # pylint: disable=wrong-import-position
 
+# Rutas usadas en el pipeline
 RAW_DIR = BASE_DIR / "data/raw"
 CLEAN_DIR = BASE_DIR / "data/clean"
 QUALITY_DIR = BASE_DIR / "data/quality"
@@ -123,7 +126,7 @@ def run_dbt_silver(ti=None, **context):
 
 
 def _build_env(ds_nodash: str) -> dict[str, str]:
-    """Build environment variables needed by dbt commands."""
+    """Arma las variables de entorno necesarias para ejecutar dbt."""
     env = os.environ.copy()
     env.update(
         {
@@ -137,7 +140,7 @@ def _build_env(ds_nodash: str) -> dict[str, str]:
 
 
 def _run_dbt_command(command: str, ds_nodash: str) -> subprocess.CompletedProcess:
-    """Execute a dbt command and return the completed process."""
+    """Ejecuta un comando de dbt (run o test) y devuelve el proceso."""
     env = _build_env(ds_nodash)
     # Split command into individual arguments
     cmd_parts = command.split()
@@ -151,19 +154,65 @@ def _run_dbt_command(command: str, ds_nodash: str) -> subprocess.CompletedProces
     )
 
 
-# TODO: Definir las funciones necesarias para cada etapa del pipeline
-#  (bronze, silver, gold) usando las funciones de transformación y
-#  los comandos de dbt.
+def _bronze_clean_task(ds_nodash: str, **_) -> None:
+    """
+    Lee el CSV del día desde data/raw, lo limpia con pandas
+    y guarda un parquet en data/clean.
+    ds_nodash viene en formato YYYYMMDD ({{ ds_nodash }}).
+    """
+    exec_date = datetime.strptime(ds_nodash, "%Y%m%d").date()
+
+    print(f"[bronze_clean] Ejecutando limpieza para fecha: {exec_date.isoformat()}")
+    print(f"[bronze_clean] RAW_DIR: {RAW_DIR}")
+    print(f"[bronze_clean] CLEAN_DIR: {CLEAN_DIR}")
+
+    output_path = clean_daily_transactions(
+        execution_date=exec_date,
+        raw_dir=RAW_DIR,
+        clean_dir=CLEAN_DIR,
+    )
+
+    print(f"[bronze_clean] Archivo limpio generado en: {output_path}")
+
+
+
+
+def _gold_dbt_tests(ds_nodash: str, **_) -> None:
+    """
+    Ejecuta dbt test sobre las tablas finales y genera un archivo JSON
+    en data/quality indicando si se pasaron los tests.
+    """
+    print(f"[gold_dbt_tests] Ejecutando dbt test para ds_nodash={ds_nodash}")
+    result = _run_dbt_command("test", ds_nodash)
+
+    print("[gold_dbt_tests] STDOUT:\n", result.stdout)
+    print("[gold_dbt_tests] STDERR:\n", result.stderr)
+
+    QUALITY_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = QUALITY_DIR / f"gold_tests_{ds_nodash}.json"
+
+    status = {
+        "ds_nodash": ds_nodash,
+        "success": result.returncode == 0,
+    }
+
+    with output_path.open("w", encoding="utf-8") as f:
+        json.dump(status, f, indent=2)
+
+    print(f"[gold_dbt_tests] Resultado de tests guardado en: {output_path}")
+
+    if result.returncode != 0:
+        raise AirflowException("dbt test falló. Ver archivo de resultados y logs.")
 
 
 def build_dag() -> DAG:
-    """Construct the medallion pipeline DAG with bronze/silver/gold tasks."""
+    """Construye el DAG de la pipeline medallion (bronze → silver → gold)."""
     with DAG(
         dag_id="medallion_pipeline",
         description="Bronze Silver Gold",
         schedule="0 6 * * *",
         start_date=pendulum.datetime(2025, 12, 1, tz="UTC"),
-        catchup=True,
+        catchup=True,        # ✅ solo corre las fechas que dispares, no todo el histórico
         max_active_runs=1,
     ) as medallion_dag:
         # TODO:
@@ -188,6 +237,7 @@ def build_dag() -> DAG:
             op_kwargs={
                 "raw_dir": RAW_DIR,
                 "clean_dir": CLEAN_DIR,
+                "ds_nodash": "{{ ds_nodash }}"
             },
         )
 
@@ -195,12 +245,16 @@ def build_dag() -> DAG:
         silver_dbt_run = PythonOperator(
             task_id="run_dbt_silver",
             python_callable=run_dbt_silver,
+            op_kwargs={"ds_nodash": "{{ ds_nodash }}"},
+
         )
 
         ## Esta es la capa gold donde se ejecutan los tests de calidad
         gold_dbt_tests = PythonOperator(
             task_id="gold_dbt_tests",
             python_callable=run_dbt_tests,
+            op_kwargs={"ds_nodash": "{{ ds_nodash }}"},
+
         )
 
         # Define task dependencies
