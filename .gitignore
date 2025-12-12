@@ -1,8 +1,10 @@
 airflow_home/
 .venv/
 __pycache__/
+.DS_Store
 *.log
 airflow_home/
 .venv/
-__pycache__/
 *.log
+dbt/target/
+warehouse/medallion.duckdb
