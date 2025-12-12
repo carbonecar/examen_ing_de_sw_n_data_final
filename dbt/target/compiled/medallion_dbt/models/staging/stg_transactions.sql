@@ -4,7 +4,7 @@
 with source as (
     select *
     from read_parquet(
-        '/home/nilay/examen_ing_de_sw_n_data_final/data/clean/transactions_20251201_clean.parquet'
+        '/home/nilay/examen_ing_de_sw_n_data_final/data/clean/transactions_20251210_clean.parquet'
     )
 )
 
