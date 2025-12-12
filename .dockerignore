@@ -1,9 +1,15 @@
 .venv/
-airflow_home/
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
 .DS_Store
+.git
+.gitignore
 dbt/logs/
 dbt/target/
+airflow_home/
 warehouse/medallion.duckdb
 profiles/.user.yml
-*.log
