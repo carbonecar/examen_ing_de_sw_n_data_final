@@ -142,7 +142,7 @@ def _run_dbt_command(command: str, ds_nodash: str) -> subprocess.CompletedProces
     # Split command into individual arguments
     cmd_parts = command.split()
     return subprocess.run(
-        ["dbt"] + cmd_parts + ["--project-dir", str(DBT_DIR)],
+        ["dbt"] + cmd_parts + ["--project-dir", str(DBT_DIR), "--no-send-anonymous-usage-stats"],
         cwd=DBT_DIR,
         env=env,
         capture_output=True,
