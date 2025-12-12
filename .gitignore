@@ -8,3 +8,6 @@ __pycache__/
 *.log
 dbt/target/
 dbt/target/
+data/raw/
+data/clean/
+dbt/logs/
