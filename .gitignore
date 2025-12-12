@@ -7,3 +7,4 @@ airflow_home/
 __pycache__/
 *.log
 dbt/target/
+dbt/target/
