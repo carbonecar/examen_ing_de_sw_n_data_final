@@ -11,3 +11,5 @@ dbt/target/
 data/raw/
 data/clean/
 dbt/logs/
+__pycache__/
+*.pyc

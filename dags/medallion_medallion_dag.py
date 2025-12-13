@@ -49,7 +49,7 @@ def _build_env(ds_nodash: str) -> dict[str, str]:
 def _run_dbt_command(command: str, ds_nodash: str) -> subprocess.CompletedProcess:
     """Ejecuta un comando de dbt (run o test) y devuelve el proceso."""
     env = _build_env(ds_nodash)
-    return subprocess.run(
+    result = subprocess.run(
         ["dbt", command, "--project-dir", str(DBT_DIR)],
         cwd=DBT_DIR,
         env=env,
@@ -58,6 +58,11 @@ def _run_dbt_command(command: str, ds_nodash: str) -> subprocess.CompletedProces
         check=False,
     )
 
+    if result.stdout:
+        print(result.stdout)
+    if result.stderr:
+        print(result.stderr)
+    return result
 
 def _bronze_clean_task(ds_nodash: str, **_) -> None:
     """
