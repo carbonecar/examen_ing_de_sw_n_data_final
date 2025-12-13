@@ -32,6 +32,7 @@ Este proyecto crea un pipeline de 3 pasos que replica la arquitectura medallion:
 ```
 
 ## Requisitos
+Se puede correr con docker o manual es indistinto. Se recomienda probar con docker puesto que es mas simple
 ### Ejecución con Docker
 
 Es importante cuando se hace docker compose up esperar a que  termine de levantar, si se hace -d no se puede ver con claridad cuando esto pasa y  el 
