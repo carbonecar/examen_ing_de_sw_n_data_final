@@ -1,5 +1,5 @@
 
-# Medallion Architecture Demo (Airflow + dbt + DuckDB) > ✏️ **MODIFICADO:** Esta sección fue actualizada
+# Medallion Architecture Demo (Airflow + dbt + DuckDB) ✏️ **MODIFICADO:** Esta sección fue actualizada
 
 
 
