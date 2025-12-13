@@ -6,6 +6,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 import pandas as pd
+import pendulum
 
 RAW_FILE_TEMPLATE = "transactions_{ds_nodash}.csv"
 CLEAN_FILE_TEMPLATE = "transactions_{ds_nodash}_clean.parquet"
@@ -28,94 +29,46 @@ def _normalize_status(value: pd.Series) -> pd.Series:
 
 
 def clean_daily_transactions(
-    execution_date: date,
     raw_dir: Path,
     clean_dir: Path,
     raw_template: str = RAW_FILE_TEMPLATE,
     clean_template: str = CLEAN_FILE_TEMPLATE,
+    **context,
 ) -> Path:
-    """
-    Clean the raw CSV for the DAG date and save as parquet.
-
-    Archivo utilizado:
-    - Si existe el CSV exacto para execution_date → usarlo.
-    - Si NO existe:
-        • Buscar archivos <= execution_date.
-        • Si el archivo más reciente tiene delta <= 1 día → usarlo.
-        • Si delta > 1 día → generar CSV sintético vacío.
-    - Si no existe ningún CSV → generar CSV sintético vacío.
-    """
-
-    ds_nodash = execution_date.strftime("%Y%m%d")
-    expected_path = raw_dir / raw_template.format(ds_nodash=ds_nodash)
-
-    # Si el archivo del día existe → usarlo
-    if expected_path.exists():
-        input_path = expected_path
+    """Read the raw CSV for the DAG date, clean it, and save a parquet file."""
+    # Get the execution date from context
+    data_interval_start = context.get("data_interval_start")
+    if data_interval_start:
+        ds_nodash = data_interval_start.format("YYYYMMDD")
     else:
-        raw_dir.mkdir(parents=True, exist_ok=True)
+        logical_date = (
+            context.get("logical_date")
+            or context.get("execution_date")
+            or context.get("data_interval_start")
+            or context.get("run_id")  # Last resort, parse from run_id
+        )
+        if logical_date is None:
+            logical_date = pendulum.now("UTC")
 
-        # Buscar archivos raw válidos
-        candidates = []
-        for path in raw_dir.glob("transactions_*.csv"):
-            try:
-                stem = path.stem  # "transactions_20251209"
-                date_str = stem.split("_")[1]
-                file_date = datetime.strptime(date_str, "%Y%m%d").date()
-                if file_date <= execution_date:
-                    candidates.append((path, file_date))
-            except Exception:
-                continue
-
-        # Si hay archivos previos...
-        if candidates:
-            latest_path, latest_date = max(candidates, key=lambda x: x[1])
-            delta_days = (execution_date - latest_date).days
-
-            if delta_days <= 1:
-                print(
-                    f"[clean_daily_transactions] INFO: No se encontró "
-                    f"{expected_path.name}. Usando archivo anterior: "
-                    f"{latest_path.name} (delta {delta_days} días)."
-                )
-                input_path = latest_path
-            else:
-                print(
-                    f"[clean_daily_transactions] WARNING: No hay archivo para "
-                    f"{execution_date}, y el último existente ({latest_date}) "
-                    f"tiene delta de {delta_days} días. Se generará CSV vacío."
-                )
-                df_empty = pd.DataFrame(
-                    columns=[
-                        "transaction_id",
-                        "customer_id",
-                        "amount",
-                        "status",
-                        "transaction_ts",
-                    ]
-                )
-                df_empty.to_csv(expected_path, index=False)
-                input_path = expected_path
-
+        # Handle both pendulum and datetime objects
+        if hasattr(logical_date, "strftime"):
+            ds_nodash = logical_date.strftime("%Y%m%d")
         else:
-            print(
-                f"[clean_daily_transactions] WARNING: No existen archivos raw "
-                f"para fechas <= {execution_date}. Se generará CSV vacío."
-            )
-            df_empty = pd.DataFrame(
-                columns=[
-                    "transaction_id",
-                    "customer_id",
-                    "amount",
-                    "status",
-                    "transaction_ts",
-                ]
-            )
-            df_empty.to_csv(expected_path, index=False)
-            input_path = expected_path
+            # Fallback: use today's date
+            ds_nodash = context.get("ds_nodash")
+            if not ds_nodash:
+                ds_nodash = pendulum.now("UTC").strftime("%Y%m%d")
 
-    # Ruta del archivo limpio generado
+    input_path = raw_dir / raw_template.format(ds_nodash=ds_nodash)
     output_path = clean_dir / clean_template.format(ds_nodash=ds_nodash)
+
+    if not input_path.exists():
+        # crear un archivo vacio con estas colounas transaction_id,customer_id,amount,status,transaction_ts para evitar errores
+        columns = ["transaction_id", "customer_id", "amount", "status", "transaction_ts"]
+        empty_df = pd.DataFrame(columns=columns)
+        empty_df.to_csv(input_path, index=False)
+        #raise FileNotFoundError(f"Raw data not found for {ds_nodash}: {input_path}")
+
     clean_dir.mkdir(parents=True, exist_ok=True)
 
     # Leer el CSV seleccionado
@@ -142,5 +95,4 @@ def clean_daily_transactions(
     # Guardar parquet
     df.to_parquet(output_path, index=False)
 
-    return output_path
-
+    return str(output_path)

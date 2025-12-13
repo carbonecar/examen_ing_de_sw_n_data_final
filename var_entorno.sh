@@ -4,3 +4,4 @@ export DUCKDB_PATH=$(pwd)/warehouse/medallion.duckdb
 export AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags
 export AIRFLOW__CORE__LOAD_EXAMPLES=False
 export PYTHONPATH=$(pwd)
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
