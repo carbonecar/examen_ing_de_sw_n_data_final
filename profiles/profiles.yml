@@ -3,6 +3,6 @@ medallion_duckdb:
   outputs:
     dev:
       type: duckdb
-      path: "{{ env_var('DUCKDB_PATH', '/home/w1ndman/laboral/examen_ing_de_sw_n_data/warehouse/medallion.duckdb') }}"
+      path: "{{ env_var('DUCKDB_PATH', '/home/nilay/examen_ing_de_sw_n_data_final/warehouse/medallion.duckdb') }}"
       threads: 4
       extensions: ["parquet"]
