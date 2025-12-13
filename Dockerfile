@@ -15,8 +15,27 @@ RUN apt-get update && apt-get install -y \
     vim \
     nano \
     build-essential \
+    unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Instalar DuckDB CLI según la arquitectura
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-amd64.zip && \
+        unzip duckdb_cli-linux-amd64.zip -d /usr/local/bin/ && \
+        chmod +x /usr/local/bin/duckdb && \
+        rm duckdb_cli-linux-amd64.zip; \
+    elif [ "$ARCH" = "aarch64" ]; then \
+        wget https://github.com/duckdb/duckdb/releases/download/v1.1.3/duckdb_cli-linux-aarch64.zip && \
+        unzip duckdb_cli-linux-aarch64.zip -d /usr/local/bin/ && \
+        chmod +x /usr/local/bin/duckdb && \
+        rm duckdb_cli-linux-aarch64.zip; \
+    else \
+        echo '#!/bin/bash' > /usr/local/bin/duckdb && \
+        echo 'python3 -m duckdb "$@"' >> /usr/local/bin/duckdb && \
+        chmod +x /usr/local/bin/duckdb; \
+    fi
 
 # Crear enlaces simbólicos para python y pip (forzar si ya existen)
 RUN ln -sf /usr/bin/python3 /usr/bin/python && \
@@ -34,6 +53,7 @@ WORKDIR /workspace
 ENV AIRFLOW_HOME=/workspace/airflow_home
 ENV DBT_PROFILES_DIR=/workspace/profiles
 ENV DUCKDB_PATH=/workspace/warehouse/medallion.duckdb
+ENV CLEAN_DIR=/workspace/data/clean
 ENV AIRFLOW__CORE__DAGS_FOLDER=/workspace/dags
 ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
 ENV PYTHONPATH=/workspace

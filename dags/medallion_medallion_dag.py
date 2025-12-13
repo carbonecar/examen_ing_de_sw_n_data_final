@@ -237,7 +237,6 @@ def build_dag() -> DAG:
             op_kwargs={
                 "raw_dir": RAW_DIR,
                 "clean_dir": CLEAN_DIR,
-                "ds_nodash": "{{ ds_nodash }}"
             },
         )
 
@@ -245,7 +244,6 @@ def build_dag() -> DAG:
         silver_dbt_run = PythonOperator(
             task_id="run_dbt_silver",
             python_callable=run_dbt_silver,
-            op_kwargs={"ds_nodash": "{{ ds_nodash }}"},
 
         )
 
@@ -253,8 +251,6 @@ def build_dag() -> DAG:
         gold_dbt_tests = PythonOperator(
             task_id="gold_dbt_tests",
             python_callable=run_dbt_tests,
-            op_kwargs={"ds_nodash": "{{ ds_nodash }}"},
-
         )
 
         # Define task dependencies
