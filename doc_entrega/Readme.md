@@ -12,11 +12,11 @@ docker-compose up
 
 Una vez que termino de levantar ir a http://localhost:8080 e iniciar el dag porque aparece deshabilitado. Este comenzara a cargar todos los archivos que hay en raw. Si hay algún problema de login probar en modo incógnito y/o borrar cookies porque airflow deja cookies y sessiones que complican el login.
 
-En caso de querer ingresar a la consola usar 
+En caso de querer ingresar a la consola, en el directorio donde esta el archivo docker compose usar 
 ``` 
 docker-compose exec linux-env bash
 ```
-notar que linux-env es el nombre del servicio que pusimos en el docker-compose
+notar que linux-env es el nombre del servicio que pusimos en el docker-compose. 
 
 Para bajar docker usar: 
 ```
