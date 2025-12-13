@@ -16,7 +16,7 @@ En caso de querer ingresar a la consola usar
 ``` 
 docker-compose exec linux-env bash
 ```
-notar que linux-env es el nombre del servicio
+notar que linux-env es el nombre del servicio que pusimos en el docker-compose
 
 Para bajar docker usar: 
 ```
