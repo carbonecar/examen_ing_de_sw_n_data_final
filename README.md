@@ -47,6 +47,7 @@ docker-compose up
 Una vez que termino de levantar ir a http://localhost:8080 e iniciar el dag porque aparece deshabilitado. Este comenzara a cargar todos los archivos que hay en raw. 
 Si hay algún problema de loguin probar en modo incógniot y/o borrar cookies porque airflow deja cookies y sessiones que complican el login.
 
+Para mas documentacion leer [Documentación Entrega](doc_entrega/Readme.md)
 
 ### Ejecución manual
 - Python 3.10+
