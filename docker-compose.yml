@@ -9,4 +9,4 @@ services:
     stdin_open: true
     tty: true
     working_dir: /workspace
-    command: airflow standalone
+    command: /workspace/.venv/bin/airflow standalone

@@ -48,8 +48,10 @@ SHELL ["/bin/bash", "-c"]
 
 # Script de inicialización que se ejecutará al iniciar el contenedor
 RUN echo '#!/bin/bash' > /entrypoint.sh && \
+    echo 'set -e' >> /entrypoint.sh && \
     echo 'cd /workspace' >> /entrypoint.sh && \
     echo '' >> /entrypoint.sh && \
+    echo '# Configurar entorno virtual si no existe' >> /entrypoint.sh && \
     echo 'if [ ! -d "/workspace/.venv" ]; then' >> /entrypoint.sh && \
     echo '  echo "=== Configurando entorno virtual ==="' >> /entrypoint.sh && \
     echo '  python -m venv .venv' >> /entrypoint.sh && \
@@ -57,8 +59,14 @@ RUN echo '#!/bin/bash' > /entrypoint.sh && \
     echo '  pip install --upgrade pip' >> /entrypoint.sh && \
     echo '  pip install -r requirements.txt' >> /entrypoint.sh && \
     echo '  echo "=== Entorno configurado correctamente ==="' >> /entrypoint.sh && \
+    echo 'else' >> /entrypoint.sh && \
+    echo '  echo "=== Entorno virtual ya existe ==="' >> /entrypoint.sh && \
     echo 'fi' >> /entrypoint.sh && \
+    echo '' >> /entrypoint.sh && \
+    echo '# Activar entorno virtual' >> /entrypoint.sh && \
     echo 'source /workspace/.venv/bin/activate' >> /entrypoint.sh && \
+    echo '' >> /entrypoint.sh && \
+    echo '# Ejecutar comando' >> /entrypoint.sh && \
     echo 'exec "$@"' >> /entrypoint.sh && \
     chmod +x /entrypoint.sh
 
