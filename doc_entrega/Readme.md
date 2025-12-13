@@ -1,3 +1,24 @@
+## Ejecución con Docker
+Es importante cuando se hace docker compose up esperar a que termine de levantar, si se hace -d no se puede ver con claridad cuando esto pasa y el docker esta hecho para levantar airflow directamente.
+
+```
+docker-compose build --no-cache
+docker-compose up 
+```
+
+Una vez que termino de levantar ir a http://localhost:8080 e iniciar el dag porque aparece deshabilitado. Este comenzara a cargar todos los archivos que hay en raw. Si hay algún problema de loguin probar en modo incógniot y/o borrar cookies porque airflow deja cookies y sessiones que complican el login.
+
+En caso de querer ingresar a la consola usar 
+``` 
+docker compose exec linux-env bash
+```
+notar que linux-env es el nombre del servicio
+
+### Scripts utiles
+- var_entorno.sh: setea todas las variables de una. 
+- clean_run.sh: borra todas las carpetas accesorias para tener una corrida limpia, es equivalente a clonar el repo de nuevo pero no borra el entorno virtual
+
+
 ### Bugs del entorno  y el código entregado
 - En mac hay que setear OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES como variable porque airflow lo usa los subprocesos que no son "fork safe",. 
 Al usar subprocesos para llamar a dbt se importan librerias nativas de duckdb, dbt compiladas con Objetive-C que no son fork-safe. 
