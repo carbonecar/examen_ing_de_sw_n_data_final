@@ -1,5 +1,6 @@
 
-# Medallion Architecture Demo (Airflow + dbt + DuckDB) ![Nuevo](https://img.shields.io/badge/NUEVO-brightgreen)
+# Medallion Architecture Demo (Airflow + dbt + DuckDB) > ✏️ **MODIFICADO:** Esta sección fue actualizada
+
 
 
 Este proyecto crea un pipeline de 3 pasos que replica la arquitectura medallion:
