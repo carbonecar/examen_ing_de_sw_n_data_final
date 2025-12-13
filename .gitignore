@@ -7,10 +7,3 @@ dbt/target/
 warehouse/medallion.duckdb
 profiles/.user.yml
 *.log
-
-# dbt outputs / clean data
-data/clean/
-
-# data generated
-data/clean/
-data/raw/
