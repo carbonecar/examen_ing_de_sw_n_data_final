@@ -64,7 +64,10 @@ pip install -r requirements.txt
 
 ## Configuración de variables de entorno > ✏️ **MODIFICADO:** Esta sección fue actualizada
 
-Se proporciona un script (var_entorno) para facilitar su seteo en la version manual, en la version dockerizada se hace automágicamente
+
+🆕 **NUEVO:** Se agregan dos variables de enotorno nuevas
+
+Se proporciona un script (var_entorno) para facilitar su seteo en la version manual, en la version dockerizada se hace automágicamente. 
 
 ```bash
 export AIRFLOW_HOME=$(pwd)/airflow_home
@@ -72,7 +75,7 @@ export DBT_PROFILES_DIR=$(pwd)/profiles
 export DUCKDB_PATH=$(pwd)/warehouse/medallion.duckdb
 export AIRFLOW__CORE__DAGS_FOLDER=$(pwd)/dags
 export AIRFLOW__CORE__LOAD_EXAMPLES=False
-export PYTHONPATH=$(pwd)
+export PYTHONPATH=$(pwd) 
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
