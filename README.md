@@ -1,4 +1,6 @@
-# Medallion Architecture Demo (Airflow + dbt + DuckDB)
+
+# Medallion Architecture Demo (Airflow + dbt + DuckDB) ![Nuevo](https://img.shields.io/badge/NUEVO-brightgreen)
+
 
 Este proyecto crea un pipeline de 3 pasos que replica la arquitectura medallion:
 
@@ -31,7 +33,7 @@ Este proyecto crea un pipeline de 3 pasos que replica la arquitectura medallion:
 └── requirements.txt
 ```
 
-## Requisitos
+## Requisitos ![Nuevo](https://img.shields.io/badge/NUEVO-brightgreen)
 Se puede correr con docker o manual es indistinto. Se recomienda probar con docker puesto que es mas simple
 ### Ejecución con Docker
 
@@ -58,7 +60,9 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Configuración de variables de entorno
+## Configuración de variables de entorno > ✏️ **MODIFICADO:** Esta sección fue actualizada
+
+Se proporciona un script (var_entorno) para facilitar su seteo en la version manual, en la version dockerizada se hace automágicamente
 
 ```bash
 export AIRFLOW_HOME=$(pwd)/airflow_home
@@ -219,7 +223,7 @@ Necesarios para completar el workflow:
 - [x] Implementar tareas de Airflow.
 - [x] Implementar modelos de dbt según cada archivo schema.yml.
 - [ ] Implementar pruebas de dbt para asegurar que las tablas gold estén correctas.
-- [ ] Documentar mejoras posibles para el proceso considerado aspectos de escalabilidad y modelado de datos.
+- [x] Documentar mejoras posibles para el proceso considerado aspectos de escalabilidad y modelado de datos.
 Nice to hace:
 - [x] Manejar el caso que no haya archivos para el dia indicado.
 - - Se soluciona generando un archivo vacio con las columas indicadas

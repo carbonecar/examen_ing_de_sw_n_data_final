@@ -1,5 +1,6 @@
 # Se puede correr con docker o manual es indistinto. Se recomienda probar con docker puesto que es mas simple
 
+Nota: el README original, donde están las instrucciones del TP fue modificado ligeramente para que se pueda correr tambien manualmente como sugería el TP
 
 ## Ejecución con Docker
 Es importante cuando se hace docker compose up esperar a que termine de levantar, si se hace -d no se puede ver con claridad cuando esto pasa y el docker esta hecho para levantar airflow directamente.
